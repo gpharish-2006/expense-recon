@@ -1,0 +1,40 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+*.dylib
+
+# Virtual environments & package managers
+.venv/
+venv/
+ENV/
+env/
+.uv/
+
+# Build & distribution artifacts (Maturin / Python / Rust)
+target/
+build/
+dist/
+*.egg-info/
+*.whl
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Sensitive financial inputs & generated ledger outputs
+data/statements/*.csv
+data/invoices/*.pdf
+output/*.csv
+output/*.md
+
+# IDE & OS clutter
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

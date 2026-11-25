@@ -1,0 +1,20 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "recon-app"
+version = "0.1.0"
+description = "Hybrid Rust + Agentic Expense Reconciliation Pipeline"
+requires-python = ">=3.10"
+dependencies = [
+    "crewai>=0.86.0",
+    "pydantic>=2.9.0",
+    "python-dotenv>=1.0.1",
+    "pandas>=2.2.0",
+]
+
+[tool.maturin]
+python-source = "python"
+module-name = "recon_app.recon_engine"
+features = ["pyo3/extension-module"]
