@@ -1,4 +1,6 @@
 import os
+os.environ.setdefault("CREWAI_TRACING_ENABLED", "false")
+
 from crewai import Agent, Crew, LLM, Process
 from recon_app.tasks import LedgerOutput, build_tasks
 
@@ -42,7 +44,7 @@ def run_reconciliation_crew(rust_payload_json: str) -> LedgerOutput:
             "UPI/DR/SWIGGY, or NEFT transfers) into clean vendor names and standard ledger categories."
         ),
         llm=llm,
-        verbose=True,
+        verbose=False,
         allow_delegation=False,
     )
 
@@ -54,7 +56,7 @@ def run_reconciliation_crew(rust_payload_json: str) -> LedgerOutput:
             "anomalies and flags missing invoices for follow-up."
         ),
         llm=llm,
-        verbose=True,
+        verbose=False,
         allow_delegation=False,
     )
 
@@ -66,7 +68,7 @@ def run_reconciliation_crew(rust_payload_json: str) -> LedgerOutput:
             "tax-ready expense table."
         ),
         llm=llm,
-        verbose=True,
+        verbose=False,
         allow_delegation=False,
     )
 
@@ -76,8 +78,11 @@ def run_reconciliation_crew(rust_payload_json: str) -> LedgerOutput:
         agents=[categorizer, auditor, reporter],
         tasks=tasks,
         process=Process.sequential,
-        verbose=True,
+        verbose=False,
     )
 
+
     result = crew.kickoff()
+    print(result.pydantic.model_dump_json(indent=2))
+    
     return result.pydantic

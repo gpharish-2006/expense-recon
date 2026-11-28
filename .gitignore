@@ -30,6 +30,7 @@ data/statements/*.csv
 data/invoices/*.pdf
 output/*.csv
 output/*.md
+output/*.json
 
 # IDE & OS clutter
 .vscode/

@@ -13,11 +13,13 @@ A hybrid expense reconciliation pipeline that combines a high-speed deterministi
    * Matches debits to invoices using exact amount and a `±3`-day window, flagging anomalies (`TAX_CHARGED_WITHOUT_GSTIN`, `MULTIPLE_MATCHING_INVOICES`) and returning a JSON payload to Python.
 3. **Agentic Workflow (`python/recon_app/`)**
    * **Merchant & Expense Categorizer:** Decodes cryptic payment strings (such as `RAZORPAY*AWS` or `UPI/DR/...`) and maps them to standard accounting categories.
-   * **Financial Discrepancy Auditor:** Reviews flagged items, unmatched debits, and unreadable PDFs, highlighting GST/ITC/RCM considerations and missing receipts.
+   * **Financial Discrepancy Auditor:** Reviews flagged items, unmatched debits, orphaned invoices, and unreadable PDFs, highlighting GST/ITC/RCM considerations and missing receipts.
    * **Approval & Ledger Reporter:** Pauses (`human_input=True`) for human confirmation before compiling the validated `LedgerOutput` Pydantic schema.
-4. **Output Layer (`output/`)**
-   * `output/reconciled_expenses.csv` — Final categorized expense ledger.
-   * `output/summary.md` — Spend totals, GST summary, and missing invoices to chase.
+4. **Idempotency, Audit Trail & Output Layer (`output/`)**
+   * `output/.recon_state.json` — Tracks SHA-256 hashes of processed transactions and PDFs so re-runs skip duplicates without re-invoking LLMs.
+   * `output/reconciled_expenses.csv` — Cumulative categorized expense ledger deduplicated across runs.
+   * `output/summary.md` — Spend totals, GST summary, missing invoices to chase, and an append-only run audit log with model name, skipped counts, and ledger fingerprint.
+
 
 ## Project Structure
 
@@ -27,6 +29,8 @@ expense-recon/
 ├── pyproject.toml              # Maturin build configuration
 ├── requirements.txt            # Python dependencies
 ├── .env                        # API keys
+├── .gitignore
+├── README.md
 │
 ├── src/
 │   └── lib.rs                  # Full Rust engine 
@@ -43,6 +47,7 @@ expense-recon/
 │   └── invoices/               # Input .pdf receipts & bills
 │
 └── output/
+    ├── .recon_state.json
     ├── reconciled_expenses.csv # Final categorized ledger
     └── summary.md              # Spend breakdown & missing invoice list
 ```
